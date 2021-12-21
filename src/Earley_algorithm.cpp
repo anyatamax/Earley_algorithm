@@ -3,10 +3,10 @@
 bool operator<(const Rule &lhs, const Rule &rhs) {
     if (lhs.left_path == rhs.left_path) {
         if (rhs.right_path == lhs.right_path) {
-            if (lhs.next == rhs.next) {
+            if (lhs.index_parent == rhs.index_parent) {
                 return lhs.dot_position < rhs.dot_position;
             }
-            return lhs.next < rhs.next;
+            return lhs.index_parent < rhs.index_parent;
         }
         return rhs.right_path < lhs.right_path;
     }
@@ -16,7 +16,7 @@ bool operator<(const Rule &lhs, const Rule &rhs) {
 bool operator==(const Rule &lhs, const Rule &rhs) {
     return (lhs.left_path == rhs.left_path &&
             lhs.right_path == rhs.right_path &&
-            lhs.next == rhs.next &&
+            lhs.index_parent == rhs.index_parent &&
             lhs.dot_position == rhs.dot_position);
 }
 
@@ -41,47 +41,32 @@ std::istream& operator>>(std::istream& in, Grammar& grammar) {
     std::string rule;
     std::getline(in, rule);
     int index = 0;
-    if (!Algo::IsNonTerminal(rule[index])) {
-        throw LRException("Invalid input");
-    }
-    grammar.alphabet_[1].insert(rule[index]);
+//    if (!Algo::IsNonTerminal(rule[index])) {
+//        throw LRException("Invalid input");
+//    }
     ++index;
-    if (rule[index] != ' ' && rule[index] != '-') {
-        throw LRException("Invalid input");
-    }
+//    if (rule[index] != ' ' && rule[index] != '-') {
+//        throw LRException("Invalid input");
+//    }
     while (index < rule.size() && rule[index] == ' ') {
         ++index;
     }
-    if (index >= rule.size() - 1) {
-        throw LRException("Invalid input");
-    }
-    if (rule[index] != '-' || rule[index + 1] != '>') {
-        throw LRException("Invalid input");
-    }
+//    if (index >= rule.size() - 1) {
+//        throw LRException("Invalid input");
+//    }
+//    if (rule[index] != '-' || rule[index + 1] != '>') {
+//        throw LRException("Invalid input");
+//    }
     index += 2;
-    if (index > rule.size() - 1) {
-        throw LRException("Invalid input");
-    }
+//    if (index > rule.size() - 1) {
+//        throw LRException("Invalid input");
+//    }
     while (index < rule.size() && rule[index] == ' ') {
         ++index;
     }
-    if (index == rule.size()) {
-        throw LRException("Invalid input");
-    }
+//    if (index == rule.size()) {
+//        throw LRException("Invalid input");
+//    }
     grammar.InsertGrammar(rule[0], rule.substr(index, rule.size()));
-    for (int i = index; i < rule.size(); ++i) {
-        if (std::isalpha(rule[i])) {
-            if (Algo::IsTerminal(rule[i])) {
-                grammar.alphabet_[0].insert(rule[i]);
-            }
-            if (Algo::IsNonTerminal(rule[i])) {
-                grammar.alphabet_[1].insert(rule[i]);
-            }
-        } else if (rule[i] != '$') {
-            grammar.alphabet_[0].insert(rule[i]);
-        } else {
-            throw LRException("Invalid input");
-        }
-    }
     return in;
 }
