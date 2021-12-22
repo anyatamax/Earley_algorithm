@@ -23,14 +23,12 @@ struct Rule {
     int index_parent = 0;
     int dot_position = 0;
     friend bool operator<(const Rule &lhs, const Rule &rhs);
-    friend bool operator==(const Rule &lhs, const Rule &rhs);
 };
 
 class Grammar {
 public:
     void InsertGrammar(char left_rule, std::string &&right_rule);
     [[nodiscard]] std::map<char, std::vector<std::string>>&& GetGrammar();
-    void SetGrammar(std::map<char, std::vector<std::string>> &gram);
     friend std::istream& operator>>(std::istream& in, Grammar& grammar);
 
 protected:

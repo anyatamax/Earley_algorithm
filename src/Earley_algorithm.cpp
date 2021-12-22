@@ -17,13 +17,6 @@ bool operator<(const Rule &lhs, const Rule &rhs) {
     return lhs.left_path < rhs.left_path;
 }
 
-bool operator==(const Rule &lhs, const Rule &rhs) {
-    return (lhs.left_path == rhs.left_path &&
-            lhs.right_path == rhs.right_path &&
-            lhs.index_parent == rhs.index_parent &&
-            lhs.dot_position == rhs.dot_position);
-}
-
 void Grammar::InsertGrammar(char left_rule, std::string &&right_rule) {
     if (right_rule == ".") {
         grammar_[left_rule].push_back("");
@@ -34,10 +27,6 @@ void Grammar::InsertGrammar(char left_rule, std::string &&right_rule) {
 
 std::map<char, std::vector<std::string>>&& Grammar::GetGrammar() {
     return std::move(grammar_);
-}
-
-void Grammar::SetGrammar(std::map<char, std::vector<std::string>> &gram) {
-    grammar_ = gram;
 }
 
 std::istream& operator>>(std::istream& in, Grammar& grammar) {
