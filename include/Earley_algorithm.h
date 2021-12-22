@@ -39,12 +39,13 @@ protected:
 
 class Algo {
 public:
+    Algo() = default;
     explicit Algo(Grammar &grammar) : grammar_(grammar.GetGrammar()){};
     void PredictWrapper(std::string &str);
     static bool IsNonTerminal(char letter);
     static bool IsTerminal(char letter);
 
-private:
+protected:
     std::map<char, std::vector<std::string>> grammar_;
     std::vector<std::set<Rule>> state_table_;
     std::string cur_str_;

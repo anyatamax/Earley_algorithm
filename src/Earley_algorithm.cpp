@@ -81,6 +81,7 @@ void Algo::PredictWrapper(std::string &str) {
         std::cout << "NO\n";
     }
 }
+
 bool Algo::FindString(std::string &str) {
     cur_str_ = str;
     int len_str = str.size();
@@ -122,6 +123,7 @@ bool Algo::FindString(std::string &str) {
     Rule finish_rule = {'!', "S", 0, 1};
     return (state_table_[len_str].find(finish_rule) != state_table_[len_str].end());
 }
+
 std::set<Rule> Algo::Scan(int index) {
     std::set<Rule> find_sets;
     if (index == 0) {
@@ -139,6 +141,7 @@ std::set<Rule> Algo::Scan(int index) {
     }
     return find_sets;
 }
+
 std::set<Rule> Algo::Predict(int index) {
     std::set<Rule> find_sets;
     for (auto &situation : state_table_[index]) {
@@ -154,6 +157,7 @@ std::set<Rule> Algo::Predict(int index) {
     }
     return find_sets;
 }
+
 std::set<Rule> Algo::Complete(int index, std::set<Rule> &new_situations) {
     std::set<Rule> find_sets;
     for (auto &situation : new_situations) {
@@ -173,6 +177,7 @@ std::set<Rule> Algo::Complete(int index, std::set<Rule> &new_situations) {
     }
     return find_sets;
 }
+
 bool Algo::IsNonTerminal(char letter) {
     return std::isupper(letter);
 }
