@@ -11,6 +11,12 @@ public:
     void SetGrammar(std::map<char, std::vector<std::string>> &gram) {
         grammar_ = gram;
     }
+    void SetStr(std::string &str) {
+        cur_str_ = str;
+    }
+    void SetStateTable(std::vector<std::set<Rule>> &table) {
+        state_table_ = table;
+    }
     std::map<char, std::vector<std::string>> GetGrammar() {
         return grammar_;
     }
@@ -24,7 +30,7 @@ public:
         return Complete(index, set);
     }
 
-    bool TestAlgorithm(std::string &str) {
+    bool TestAlgorithm(std::string str) {
         return FindString(str);
     }
 
