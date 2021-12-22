@@ -1,5 +1,9 @@
 #include "Earley_algorithm.h"
 
+const char* EarleyException::what() const noexcept {
+    return error_.c_str();
+}
+
 bool operator<(const Rule &lhs, const Rule &rhs) {
     if (lhs.left_path == rhs.left_path) {
         if (rhs.right_path == lhs.right_path) {
@@ -21,52 +25,51 @@ bool operator==(const Rule &lhs, const Rule &rhs) {
 }
 
 void Grammar::InsertGrammar(char left_rule, std::string &&right_rule) {
-    grammar_[left_rule].push_back(right_rule);
-}
-
-std::vector<std::set<char>>&& Grammar::GetAlphabet() {
-    return std::move(alphabet_);
+    if (right_rule == ".") {
+        grammar_[left_rule].push_back("");
+    } else {
+        grammar_[left_rule].push_back(right_rule);
+    }
 }
 
 std::map<char, std::vector<std::string>>&& Grammar::GetGrammar() {
     return std::move(grammar_);
 }
 
-void Grammar::SetGrammar(std::map<char, std::vector<std::string>> &gram, std::vector<std::set<char>> &alph) {
+void Grammar::SetGrammar(std::map<char, std::vector<std::string>> &gram) {
     grammar_ = gram;
-    alphabet_ = alph;
 }
 
 std::istream& operator>>(std::istream& in, Grammar& grammar) {
     std::string rule;
     std::getline(in, rule);
     int index = 0;
-//    if (!Algo::IsNonTerminal(rule[index])) {
-//        throw LRException("Invalid input");
-//    }
+    if (!Algo::IsNonTerminal(rule[index])) {
+        throw EarleyException("Invalid input");
+    }
     ++index;
-//    if (rule[index] != ' ' && rule[index] != '-') {
-//        throw LRException("Invalid input");
-//    }
+    if (rule[index] != ' ' && rule[index] != '-') {
+        throw EarleyException("Invalid input");
+    }
     while (index < rule.size() && rule[index] == ' ') {
         ++index;
     }
-//    if (index >= rule.size() - 1) {
-//        throw LRException("Invalid input");
-//    }
-//    if (rule[index] != '-' || rule[index + 1] != '>') {
-//        throw LRException("Invalid input");
-//    }
+    if (index >= rule.size() - 1) {
+        throw EarleyException("Invalid input");
+    }
+    if (rule[index] != '-' || rule[index + 1] != '>') {
+        throw EarleyException("Invalid input");
+    }
     index += 2;
-//    if (index > rule.size() - 1) {
-//        throw LRException("Invalid input");
-//    }
+    if (index > rule.size() - 1) {
+        throw EarleyException("Invalid input");
+    }
     while (index < rule.size() && rule[index] == ' ') {
         ++index;
     }
-//    if (index == rule.size()) {
-//        throw LRException("Invalid input");
-//    }
+    if (index == rule.size()) {
+        throw EarleyException("Invalid input");
+    }
     grammar.InsertGrammar(rule[0], rule.substr(index, rule.size()));
     return in;
 }
@@ -88,7 +91,6 @@ bool Algo::FindString(std::string &str) {
     for (int i = 0; i <= len_str; ++i) {
         std::set<Rule> new_sets = Scan(i);
         std::set<Rule> new_sets_complete;
-        std::set<Rule> new_sets_predict;
         for (auto &rule : new_sets) {
             state_table_[i].insert(rule);
         }
@@ -96,7 +98,7 @@ bool Algo::FindString(std::string &str) {
         bool flag_first = true;
         do {
             change = false;
-            if (flag_first) {
+            if (flag_first || new_sets_complete.empty()) {
                 new_sets_complete = Complete(i, state_table_[i]);
             } else {
                 new_sets_complete = Complete(i, new_sets_complete);
